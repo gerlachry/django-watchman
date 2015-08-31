@@ -1,7 +1,8 @@
 import sys
 from testing.elasticsearch import ElasticSearchServer
 
-#setup Elastic testing server dependent on elasticsearch being on current PATH
+#setup Elastic testing server
+# dependent on elasticsearch being on current PATH
 es = ElasticSearchServer()
 es.start()
 

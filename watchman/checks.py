@@ -12,6 +12,7 @@ from django.core.mail import EmailMessage
 from django.db import connections
 import requests
 
+
 def _check_caches(caches):
     return [_check_cache(cache) for cache in caches]
 

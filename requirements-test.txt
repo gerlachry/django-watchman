@@ -8,5 +8,5 @@ nose>=1.3.0
 django-nose>=1.2
 flake8>=2.1.0
 restructuredtext_lint==0.12.2
-testing.elasticsearch==0.2.3
+https://github.com/gerlachry/testing.elasticsearch/archive/master.zip
 tox>=1.7.0
