@@ -1,7 +1,7 @@
 import sys
 from testing.elasticsearch import ElasticSearchServer
 
-#setup Elastic testing server
+#setup Elastic testing server dependent on elasticsearch being on current PATH
 es = ElasticSearchServer()
 es.start()
 
@@ -53,6 +53,7 @@ def run_tests(*test_args):
 
     failures = test_runner.run_tests(test_args)
 
+    #stop Elastic testing server
     es.stop()
 
     if failures:
