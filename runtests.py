@@ -30,10 +30,7 @@ try:
             "default": {
                 "HOST": "http://" + es._bind_host,
                 "PORT": str(es._bind_port),
-                "proxies": {
-                    "http": None,
-                    "https": None
-                }
+
             }
         }
     )

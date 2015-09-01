@@ -101,7 +101,10 @@ def _check_elastics(elastics):
 
 def _check_elastic(elastic, value):
     try:
-        resp = requests.get(value['HOST'] + ':' + value['PORT'], proxies=value['proxies'])
+        if 'proxies' in value:
+            resp = requests.get(value['HOST'] + ':' + value['PORT'], proxies=value['proxies'])
+        else:
+            resp = requests.get(value['HOST'] + ':' + value['PORT'])
         if resp.status_code != requests.codes.ok:
             response = {
                 elastic: {
