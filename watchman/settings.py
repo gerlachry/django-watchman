@@ -10,6 +10,7 @@ DEFAULT_CHECKS = (
     'watchman.checks.caches',
     'watchman.checks.databases',
     'watchman.checks.storage',
+    'watchman.checks.elastics',
 )
 PAID_CHECKS = (
     'watchman.checks.email',

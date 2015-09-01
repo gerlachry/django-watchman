@@ -55,7 +55,7 @@ class TestWatchman(unittest.TestCase):
         self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_response_contains_expected_checks(self):
-        expected_checks = ['caches', 'databases', 'storage', ]
+        expected_checks = ['caches', 'databases', 'storage', 'elastics', ]
         request = RequestFactory().get('/')
         response = views.status(request)
 
@@ -78,7 +78,7 @@ class TestWatchman(unittest.TestCase):
         self.assertIn(response['foo']['error'], expected_error)
 
     def test_response_skipped_checks(self):
-        expected_checks = ['caches', 'storage', ]
+        expected_checks = ['caches', 'storage', 'elastics', ]
         request = RequestFactory().get('/', data={
             'skip': 'watchman.checks.databases',
         })

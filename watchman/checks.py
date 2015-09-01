@@ -10,6 +10,7 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.mail import EmailMessage
 from django.db import connections
+import requests
 
 
 def _check_caches(caches):
@@ -94,6 +95,35 @@ def _check_storage():
     return response
 
 
+def _check_elastics(elastics):
+    return [_check_elastic(name, val) for name, val in elastics.items()]
+
+
+def _check_elastic(elastic, value):
+    try:
+        if 'proxies' in value:
+            resp = requests.get(value['HOST'] + ':' + value['PORT'], proxies=value['proxies'])
+        else:
+            resp = requests.get(value['HOST'] + ':' + value['PORT'])
+        if resp.status_code != requests.codes.ok:
+            response = {
+                elastic: {
+                    'ok': False,
+                    'error': resp.text,
+                    'stacktrace': resp.raise_for_status(),
+                }
+            }
+        else:
+            response = {elastic: {'ok': True}}
+    except Exception as e:
+        response = {
+            "ok": False,
+            "error": str(e),
+            "stacktrace": traceback.format_exc(),
+        }
+    return response
+
+
 def caches():
     return {"caches": _check_caches(settings.CACHES)}
 
@@ -108,3 +138,7 @@ def email():
 
 def storage():
     return {"storage": _check_storage()}
+
+
+def elastics():
+    return {"elastics": _check_elastics(settings.ELASTICS)}

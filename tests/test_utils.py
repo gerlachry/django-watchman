@@ -26,7 +26,7 @@ class TestWatchman(unittest.TestCase):
 
     def test_get_checks_returns_all_available_checks_by_default(self):
         checks = [check.__name__ for check in get_checks()]
-        expected_checks = ['caches', 'databases', 'storage']
+        expected_checks = ['caches', 'databases', 'storage', 'elastics']
         self.assertListsEqual(checks, expected_checks)
 
     def test_get_checks_with_check_list_returns_union(self):
@@ -38,7 +38,7 @@ class TestWatchman(unittest.TestCase):
     def test_get_checks_with_skip_list_returns_difference(self):
         skip_list = ['watchman.checks.caches']
         checks = [check.__name__ for check in get_checks(skip_list=skip_list)]
-        expected_checks = ['databases', 'storage']
+        expected_checks = ['databases', 'storage', 'elastics']
         self.assertListsEqual(checks, expected_checks)
 
     def test_get_checks_with_matching_check_and_skip_list_returns_empty_list(self):
@@ -55,7 +55,7 @@ class TestWatchman(unittest.TestCase):
         self.assertListsEqual(checks, expected_checks)
 
     def test_get_checks_with_paid_checks_disabled_returns_expected_checks(self):
-        expected_checks = ['caches', 'databases', 'storage']
+        expected_checks = ['caches', 'databases', 'storage', 'elastics']
         checks = [check.__name__ for check in get_checks()]
         self.assertListsEqual(checks, expected_checks)
 
