@@ -64,7 +64,14 @@ Quickstart
                 }
             }
         ],
-        "storage": {"ok": true}
+        "storage": {"ok": true},
+        "elastics": [
+            {
+                "default": {
+                    "ok": true
+                }
+            }
+        ],
     }
 
 Features
@@ -215,12 +222,19 @@ Using ``django.core.files.storage.default_storage``:
 * Read the test file's contents
 * Delete the test file
 
+Elastic
+*******
+
+For each Elastic connection in ``django.conf.settings.ELASTICS``:
+
+* Verify the Elastic connection by calling the host and port specified in settings.
+
 Default checks
 **************
 
 By default, django-watchman will run checks against your databases
-(``watchman.checks.databases``), caches (``watchman.checks.caches``), and
-storage (``watchman.checks.storage``).
+(``watchman.checks.databases``), caches (``watchman.checks.caches``),
+storage (``watchman.checks.storage``) and Elastic (``watchman.checks.elastics``).
 
 Paid checks
 ***********
