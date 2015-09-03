@@ -227,7 +227,9 @@ Elastic
 
 For each Elastic connection in ``django.conf.settings.ELASTICS``:
 
-* Verify the Elastic connection by calling the host and port specified in settings.
+* Call the health API of the host and port specified in settings with optional proxy config.
+* If overall cluster health is not green then report an issue.
+
 
 Default checks
 **************

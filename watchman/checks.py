@@ -12,6 +12,8 @@ from django.core.mail import EmailMessage
 from django.db import connections
 import requests
 
+ES_HEALTH_REQUEST = '_cluster/health'
+
 
 def _check_caches(caches):
     return [_check_cache(cache) for cache in caches]
@@ -101,16 +103,25 @@ def _check_elastics(elastics):
 
 def _check_elastic(elastic, value):
     try:
+        url = '%s:%s/%s' % (value['HOST'], value['PORT'], ES_HEALTH_REQUEST)
         if 'proxies' in value:
-            resp = requests.get(value['HOST'] + ':' + value['PORT'], proxies=value['proxies'])
+            resp = requests.get(url, proxies=value['proxies'])
         else:
-            resp = requests.get(value['HOST'] + ':' + value['PORT'])
+            resp = requests.get(url)
         if resp.status_code != requests.codes.ok:
             response = {
                 elastic: {
                     'ok': False,
                     'error': resp.text,
                     'stacktrace': resp.raise_for_status(),
+                }
+            }
+        elif resp.json()['status'] != 'green':
+            response = {
+                elastic: {
+                    'ok': False,
+                    'error': resp.text,
+                    'stacktrace': resp.text,
                 }
             }
         else:

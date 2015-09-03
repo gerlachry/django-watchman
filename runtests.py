@@ -1,10 +1,15 @@
 import sys
+from clom.shell import CommandError
 from testing.elasticsearch import ElasticSearchServer
 
 #setup Elastic testing server
 # dependent on elasticsearch being on current PATH
-es = ElasticSearchServer()
-es.start()
+try:
+    es = ElasticSearchServer()
+    es.start()
+except CommandError:
+    raise CommandError("Elastic needs to be added to the current PATH")
+    sys.exit(1)
 
 try:
     from django.conf import settings
