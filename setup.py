@@ -38,6 +38,7 @@ setup(
     install_requires=[
         'django',
         'django-jsonview==0.5.0',
+        'requests',
     ],
     license="BSD",
     zip_safe=False,
