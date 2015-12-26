@@ -66,11 +66,9 @@ def dashboard(request):
 @json_view
 def app_status(request):
     check_types, overall_status = get_statuses(request)
-    log.info(overall_status)
     status = ''
     if overall_status:
         status = 'ok'
-    log.info(status)
     return status, 200, {WATCHMAN_VERSION_HEADER: __version__}
 
 
