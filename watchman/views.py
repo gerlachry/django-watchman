@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
+import logging
 
 from django.http import Http404
 from django.shortcuts import render
@@ -13,6 +14,8 @@ from watchman.utils import get_checks
 
 
 WATCHMAN_VERSION_HEADER = 'X-Watchman-Version'
+
+log = logging.getLogger('views')
 
 
 def _get_check_params(request):
@@ -47,8 +50,32 @@ def status(request):
 
 @auth
 def dashboard(request):
-    check_types = []
 
+    check_types, overall_status = get_statuses(request)
+
+    response = render(request, 'watchman/dashboard.html', {
+        'checks': check_types,
+        'overall_status': overall_status
+    })
+
+    response[WATCHMAN_VERSION_HEADER] = __version__
+    return response
+
+
+@auth
+@json_view
+def app_status(request):
+    check_types, overall_status = get_statuses(request)
+    log.info(overall_status)
+    status = ''
+    if overall_status:
+        status = 'ok'
+    log.info(status)
+    return status, 200, {WATCHMAN_VERSION_HEADER: __version__}
+
+
+def get_statuses(request):
+    check_types = []
     check_list, skip_list = _get_check_params(request)
 
     for check in get_checks(check_list=check_list, skip_list=skip_list):
@@ -121,11 +148,4 @@ def dashboard(request):
                     'statuses': statuses})
 
     overall_status = all([type_status['ok'] for type_status in check_types])
-
-    response = render(request, 'watchman/dashboard.html', {
-        'checks': check_types,
-        'overall_status': overall_status
-    })
-
-    response[WATCHMAN_VERSION_HEADER] = __version__
-    return response
+    return check_types, overall_status

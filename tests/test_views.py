@@ -10,6 +10,8 @@ Tests for `django-watchman` views module.
 from __future__ import unicode_literals
 
 import json
+import logging
+
 try:
     from importlib import reload
 except ImportError:  # Python < 3
@@ -43,6 +45,8 @@ def reload_settings():
     reload(sys.modules['watchman.decorators'])
     reload(sys.modules['watchman.views'])
 
+log = logging.getLogger('test_watchman')
+
 
 class TestWatchman(unittest.TestCase):
     def setUp(self):
@@ -65,6 +69,12 @@ class TestWatchman(unittest.TestCase):
         else:
             content = json.loads(response.content.decode('utf-8'))
             self.assertCountEqual(expected_checks, content.keys())
+
+    def test_response_app_status_content(self):
+        request = RequestFactory().get('/app_status')
+        response = views.app_status(request)
+        status = json.loads(response.content.decode('utf-8'))
+        self.assertEquals(status, 'ok')
 
     def test_check_database_handles_exception(self):
         response = checks._check_database('foo')

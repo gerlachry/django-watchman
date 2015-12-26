@@ -43,3 +43,6 @@ docs/_build
 
 # Coverage.py
 htmlcov/
+
+#Pycharm
+.idea

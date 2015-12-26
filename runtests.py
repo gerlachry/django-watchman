@@ -1,15 +1,5 @@
 import sys
-from clom.shell import CommandError
-from testing.elasticsearch import ElasticSearchServer
-
-#setup Elastic testing server
-# dependent on elasticsearch being on current PATH
-try:
-    es = ElasticSearchServer()
-    es.start()
-except CommandError:
-    raise CommandError("Elastic needs to be added to the current PATH")
-    sys.exit(1)
+import elasticsearch
 
 try:
     from django.conf import settings
@@ -33,12 +23,12 @@ try:
         NOSE_ARGS=['-s'],
         ELASTICS={
             "default": {
-                "HOST": "http://" + es._bind_host,
-                "PORT": str(es._bind_port),
+                "HOST": "http://192.168.99.100",
+                "PORT": "32769",
             },
             "backup": {
-                "HOST": "http://" + es._bind_host,
-                "PORT": str(es._bind_port),
+                "HOST": "http://192.168.99.100",
+                "PORT": "32769",
                 "proxies": {
                     "http": None,
                     "https": None
@@ -51,7 +41,14 @@ try:
 except ImportError:
     raise ImportError("To fix this error, run: pip install -r requirements-test.txt")
 
-
+#setup Elastic testing server
+try:
+    #es = ElasticSearchServer(settings.ELASTICS['default']['HOST'] + ':' + settings.ELASTICS['default']['PORT'])
+    #es.start()
+    es = elasticsearch.Elasticsearch(hosts=settings.ELASTICS['default']['HOST'] + ':' + settings.ELASTICS['default']['PORT'])
+except RuntimeError:
+    raise RuntimeError("Elastic client not able to connect to %s on port %s" % (settings.ELASTICS['default']['HOST'], settings.ELASTICS['default']['PORT']))
+    sys.exit(1)
 
 
 def run_tests(*test_args):
@@ -62,9 +59,6 @@ def run_tests(*test_args):
     test_runner = NoseTestSuiteRunner(verbosity=1)
 
     failures = test_runner.run_tests(test_args)
-
-    #stop Elastic testing server
-    es.stop()
 
     if failures:
         sys.exit(failures)
